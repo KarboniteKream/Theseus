@@ -6,5 +6,6 @@ screenshots/
 *.db
 *.dll
 *.exe
+*.log
 
 theseus
