@@ -1,0 +1,10 @@
+bin/
+log/
+obj/
+screenshots/
+
+*.db
+*.dll
+*.exe
+
+theseus
