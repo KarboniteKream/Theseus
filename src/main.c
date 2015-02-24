@@ -311,7 +311,7 @@ int main(int argc, char **argv)
 	Matrix temp[16];
 	memcpy(temp, modelMatrix, sizeof(GLfloat) * 16);*/
 
-	int i = 0;
+	int temp = 0;
 
 	Matrix viewMatrix[16];
 	Vector position = {5.0f, 5.0f, 5.0f};
@@ -322,16 +322,6 @@ int main(int argc, char **argv)
 
 	while(quit_game == false)
 	{
-		// memcpy(modelMatrix, temp, sizeof(GLfloat) * 16);
-
-		memcpy(modelMatrix, identityMatrix, sizeof(GLfloat) * 16);
-		scale(modelMatrix, 0.25f);
-		rotate(modelMatrix, i, 0);
-		rotate(modelMatrix, i, 1);
-		rotate(modelMatrix, i * 2, 2);
-
-		//translate(modelMatrix, 0, i * 0.01, 0);
-
 		while(SDL_PollEvent(&event) != 0)
 		{
 			if(event.type == SDL_QUIT)
@@ -418,22 +408,36 @@ int main(int argc, char **argv)
 				}
 			}
 		}
-		
-		i++;
+
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		memcpy(viewMatrix, identityMatrix, sizeof(GLfloat) * 16);
 
 		look_at(viewMatrix, position, target);
 
-		multiply(modelMatrix, viewMatrix);
-		multiply(modelMatrix, projectionMatrix);
+		for(int i = 0; i < 4; i++)
+		{
+			for(int j = 0; j < 4; j++)
+			{
+				memcpy(modelMatrix, identityMatrix, sizeof(GLfloat) * 16);
+				scale(modelMatrix, 0.5f);
+				// rotate(modelMatrix, temp, 0);
+				// rotate(modelMatrix, temp, 1);
+				// rotate(modelMatrix, temp * 2, 2);
+				translate(modelMatrix, i - 2, 0.0f, j - 2);
 
-		glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_FALSE, modelMatrix);
+				temp++;
 
-		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				multiply(modelMatrix, viewMatrix);
+				multiply(modelMatrix, projectionMatrix);
 
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+				glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_FALSE, modelMatrix);
+
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+		}
+
 		SDL_GL_SwapWindow(window);
 
 		// SDL_Delay(16);
