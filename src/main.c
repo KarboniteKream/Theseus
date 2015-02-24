@@ -379,6 +379,8 @@ int main(int argc, char **argv)
 			{
 				if(event.button.button == SDL_BUTTON_LEFT)
 				{
+					// SDL_CaptureMouse(SDL_TRUE);
+					SDL_SetRelativeMouseMode(SDL_TRUE);
 					is_dragging = true;
 				}
 			}
@@ -386,11 +388,15 @@ int main(int argc, char **argv)
 			{
 				if(event.button.button == SDL_BUTTON_LEFT)
 				{
+					// SDL_CaptureMouse(SDL_FALSE);
+					// TODO: Set mouse to block position.
+					SDL_SetRelativeMouseMode(SDL_FALSE);
 					is_dragging = false;
 				}
 			}
 			else if(is_dragging == true && event.type == SDL_MOUSEMOTION)
 			{
+				// TODO: Move relative to zoom level.
 				position.x -= event.motion.xrel * 0.007f;
 				position.z += event.motion.xrel * 0.007f;
 				target.x -= event.motion.xrel * 0.007f;
@@ -400,6 +406,24 @@ int main(int argc, char **argv)
 				position.z -= event.motion.yrel * 0.007f;
 				target.x -= event.motion.yrel * 0.007f;
 				target.z -= event.motion.yrel * 0.007f;
+			}
+			else if(event.type == SDL_MOUSEWHEEL)
+			{
+				Vector dir = {target.x - position.x, target.y - position.y, target.z - position.z};
+				normalize(dir);
+
+				if(event.wheel.y < 0)
+				{
+					position.x -= dir.x * 0.15f;
+					position.y -= dir.y * 0.15f;
+					position.z -= dir.z * 0.15f;
+				}
+				else
+				{
+					position.x += dir.x * 0.15f;
+					position.y += dir.y * 0.15f;
+					position.z += dir.z * 0.15f;
+				}
 			}
 		}
 		
