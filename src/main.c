@@ -347,31 +347,23 @@ int main(int argc, char **argv)
 					break;
 
 					case SDLK_LEFT:
-						position.x -= 0.5f;
-						position.z += 0.5f;
-						target.x -= 0.5f;
-						target.z += 0.5f;
+						position.x -= 1.0f;
+						target.x -= 1.0f;
 					break;
 
 					case SDLK_RIGHT:
-						position.x += 0.5f;
-						position.z -= 0.5f;
-						target.x += 0.5f;
-						target.z -= 0.5f;
+						position.x += 1.0f;
+						target.x += 1.0f;
 					break;
 
 					case SDLK_UP:
-						position.x -= 0.5f;
-						position.z -= 0.5f;
-						target.x -= 0.5f;
-						target.z -= 0.5f;
+						position.z -= 1.0f;
+						target.z -= 1.0f;
 					break;
 
 					case SDLK_DOWN:
-						position.x += 0.5f;
-						position.z += 0.5f;
-						target.x += 0.5f;
-						target.z += 0.5f;
+						position.z += 1.0f;
+						target.z += 1.0f;
 					break;
 				}
 			}
