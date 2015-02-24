@@ -67,6 +67,6 @@ GL_GetShaderInfoLog glGetShaderInfoLog;
 GL_UniformMatrix4fv glUniformMatrix4fv;
 GL_GetUniformLocation glGetUniformLocation;
 
-void print_log(const char *summary, const char *details);
+void write_log(uint8_t type, const char *format, ...);
 
 #endif
