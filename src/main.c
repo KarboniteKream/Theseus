@@ -296,10 +296,6 @@ int main(int argc, char **argv)
 
 	glUseProgram(program);
 
-	perspective(projectionMatrix, SCREEN_WIDTH, SCREEN_HEIGHT, 75, 0.1f, 100.0f);
-
-	fflush(stdout);
-
 	bool quit_game = false;
 	SDL_Event event;
 
@@ -314,11 +310,15 @@ int main(int argc, char **argv)
 	int temp = 0;
 
 	Matrix viewMatrix[16];
-	Vector position = {5.0f, 5.0f, 5.0f};
+	Vector position = {16.7f, 16.7f, 16.7f};
 	Vector target = {0.0f, 0.0f, 0.0f};
 	look_at(viewMatrix, position, target);
 
 	bool is_dragging = false;
+	bool is_ortho = false;
+
+	GLint mvp_location = glGetUniformLocation(program, "mvp");
+	GLfloat ortho_scale = 64.0f;
 
 	while(quit_game == false)
 	{
@@ -354,6 +354,10 @@ int main(int argc, char **argv)
 					case SDLK_DOWN:
 						position.z += 1.0f;
 						target.z += 1.0f;
+					break;
+
+					case SDLK_o:
+						is_ortho = !is_ortho;
 					break;
 				}
 			}
@@ -399,12 +403,22 @@ int main(int argc, char **argv)
 					position.x -= dir.x * 0.15f;
 					position.y -= dir.y * 0.15f;
 					position.z -= dir.z * 0.15f;
+
+					if(is_ortho == true)
+					{
+						ortho_scale /= 2;
+					}
 				}
 				else
 				{
 					position.x += dir.x * 0.15f;
 					position.y += dir.y * 0.15f;
 					position.z += dir.z * 0.15f;
+
+					if(is_ortho == true)
+					{
+						ortho_scale *= 2;
+					}
 				}
 			}
 		}
@@ -412,27 +426,34 @@ int main(int argc, char **argv)
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		memcpy(viewMatrix, identityMatrix, sizeof(GLfloat) * 16);
-
 		look_at(viewMatrix, position, target);
+
+		if(is_ortho == true)
+		{
+			ortho(projectionMatrix, -SCREEN_WIDTH / ortho_scale, SCREEN_WIDTH / ortho_scale, -SCREEN_HEIGHT / ortho_scale, SCREEN_HEIGHT / ortho_scale, -50.0f, 1000.0f);
+		}
+		else
+		{
+			perspective(projectionMatrix, SCREEN_WIDTH, SCREEN_HEIGHT, 75, 0.1f, 1000.0f);
+		}
+
+		multiply(viewMatrix, projectionMatrix);
 
 		for(int i = 0; i < 4; i++)
 		{
 			for(int j = 0; j < 4; j++)
 			{
 				memcpy(modelMatrix, identityMatrix, sizeof(GLfloat) * 16);
-				scale(modelMatrix, 0.5f);
+				scale(modelMatrix, 1.0f);
 				// rotate(modelMatrix, temp, 0);
 				// rotate(modelMatrix, temp, 1);
 				// rotate(modelMatrix, temp * 2, 2);
-				translate(modelMatrix, i - 2, 0.0f, j - 2);
+				translate(modelMatrix, 2 * (i - 2), 0.0f, 2 * (j - 2));
 
 				temp++;
 
 				multiply(modelMatrix, viewMatrix);
-				multiply(modelMatrix, projectionMatrix);
-
-				glUniformMatrix4fv(glGetUniformLocation(program, "mvp"), 1, GL_FALSE, modelMatrix);
+				glUniformMatrix4fv(mvp_location, 1, GL_FALSE, modelMatrix);
 
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}

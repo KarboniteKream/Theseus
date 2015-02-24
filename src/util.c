@@ -351,6 +351,19 @@ void look_at(Matrix *matrix, Vector position, Vector target)
 	matrix[15] = 1.0f;
 }
 
+void ortho(Matrix *matrix, GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_z, GLfloat far_z)
+{
+	memset(matrix, 0, sizeof(GLfloat) * 16);
+
+	matrix[0] = 2 / (right - left);
+	matrix[5] = 2 / (top - bottom);
+	matrix[10] = -2 / (far_z - near_z);
+	matrix[12] = -(right + left) / (right - left);
+	matrix[13] = -(top + bottom) / (top - bottom);
+	matrix[14] = -(far_z + near_z) / (far_z - near_z);
+	matrix[15] = 1.0f;
+}
+
 GLfloat dot(Vector v1, Vector v2)
 {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
