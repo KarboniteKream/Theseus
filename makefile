@@ -3,7 +3,7 @@
 NAME = theseus
 
 CC = clang
-CFLAGS = -std=c99 -Wall -Wextra
+CFLAGS = -std=c99 -Wall -Wextra -g
 
 SRC = src
 OBJ = obj
