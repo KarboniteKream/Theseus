@@ -7,5 +7,6 @@ screenshots/
 *.dll
 *.exe
 *.log
+.gdb_history
 
 theseus
